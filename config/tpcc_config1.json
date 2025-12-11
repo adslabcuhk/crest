@@ -1,0 +1,37 @@
+{
+  "mn": [
+    {
+      "id": 0,
+      "ip": "10.118.0.45",
+      "devname": "mlx5_1",
+      "ibport": 1,
+      "gid": 3,
+      "mr_size": 64
+    },
+    {
+      "id": 1,
+      "ip": "10.118.0.49",
+      "devname": "mlx5_1",
+      "ibport": 1,
+      "gid": 3,
+      "mr_size": 64
+    }
+  ],
+  "cn": [
+    {
+      "id": 0,
+      "ip": "10.118.0.36",
+      "devname":"mlx5_0",
+      "ibport": 1,
+      "gid": 3,
+      "mr_size": 4
+    }
+  ],
+  "tpcc": {
+    "num_warehouse": 40,
+    "num_district_per_warehouse": 10,
+    "num_customer_per_district": 300,
+    "num_stock_per_warehouse": 10000,
+    "num_item": 10000
+  }
+}
