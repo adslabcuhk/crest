@@ -89,7 +89,12 @@ After successfully building the entire codebase, you will see the following bina
 
 ## Run Experiment
 
-### Setup configuration file
+### Setup configuration file for scripts
+
+In CREST, the python scripts (under ``scripts`` directory) rely on a configuration file 
+(``scripts/bench/config.py``) to specify the IP address, the project path and other necessary information of the testbed.
+
+### Setup configuration file for workloads
 In CREST, each configuration file (``xxx.json`` under ``config`` directory) contains all necessary
 information of this workload. It contains three parts: 
 - ``mn``: The configuration of each server comprising memory pool.
@@ -189,7 +194,7 @@ python3 run_scalability_bench.py crest ycsb
 python3 run_scalability_bench.py crest tatp
 ```
 
-* Exp#4 - Exp#5
+* Exp#4
 ```shell
 cd scripts
 python3 run_breakdown.py crest tpcc
