@@ -192,20 +192,23 @@ void Benchmark::ReportMergedThreadResults() {
     }
     std::sort(all_latency.begin(), all_latency.end());
     int avg_latency =
-        std::accumulate(all_latency.begin(), all_latency.end(), 0) / all_latency.size();
+        std::accumulate(all_latency.begin(), all_latency.end(), static_cast<long long>(0)) /
+        static_cast<long long>(all_latency.size());
     int p50_latency = all_latency[all_latency.size() * 0.5];
     int p90_latency = all_latency[all_latency.size() * 0.9];
     int p99_latency = all_latency[all_latency.size() * 0.99];
     int p999_latency = all_latency[all_latency.size() * 0.999];
 
-    int avg_exec_latency = std::accumulate(all_exec_latency.begin(), all_exec_latency.end(), 0) /
-                           all_exec_latency.size();
+    int avg_exec_latency = std::accumulate(all_exec_latency.begin(), all_exec_latency.end(),
+                                           static_cast<long long>(0)) /
+                           static_cast<long long>(all_exec_latency.size());
     int avg_validate_latency =
-        std::accumulate(all_validate_latency.begin(), all_validate_latency.end(), 0) /
-        all_validate_latency.size();
-    int avg_commit_latency =
-        std::accumulate(all_commit_latency.begin(), all_commit_latency.end(), 0) /
-        all_commit_latency.size();
+        std::accumulate(all_validate_latency.begin(), all_validate_latency.end(),
+                        static_cast<long long>(0)) /
+        static_cast<long long>(all_validate_latency.size());
+    int avg_commit_latency = std::accumulate(all_commit_latency.begin(), all_commit_latency.end(),
+                                             static_cast<long long>(0)) /
+                             static_cast<long long>(all_commit_latency.size());
 
     if (!config_.output_dir.empty()) {
         // Create the output directory if not exists

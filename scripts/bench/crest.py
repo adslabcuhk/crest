@@ -369,6 +369,7 @@ class CrestBenchmark:
                 file_data = []
                 for line in lines:
                     res = np.array([float(x) for x in line.split()[1:]])
+                    res[2:] /= len(self.cns)
                     file_data.append(res)
                 all_data.append(file_data)
                 f.close()
@@ -376,6 +377,19 @@ class CrestBenchmark:
         all_data = all_data.sum(axis=0)
         # Store the result data into a file
         with open("crest_{}_aggregated_thpt".format(self.workload), "w") as f:
+            column_headers = [
+                "tried_thpt(KOPS)",
+                "committed_thpt",
+                "avg_latency(us)",
+                "p50_latency",
+                "p90_latency",
+                "p99_latency",
+                "p999_latency",
+                "avg_exec_latency",
+                "avg_validate_latency",
+                "avg_commit_latency",
+            ]
+            f.write(" ".join(column_headers) + "\n")
             for row in all_data:
                 formatted_row = [
                     f"{x:.2f}" if isinstance(x, float) else str(x) for x in row

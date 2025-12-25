@@ -191,7 +191,6 @@ cd scripts
 python3 run_scalability_bench.py crest tpcc
 python3 run_scalability_bench.py crest smallbank
 python3 run_scalability_bench.py crest ycsb
-python3 run_scalability_bench.py crest tatp
 ```
 
 * Exp#4
