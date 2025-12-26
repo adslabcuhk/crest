@@ -1,0 +1,8 @@
+cmake-build-debug
+cmake-build-release
+build
+.idea
+.vscode
+compile_commands.json
+.cache
+config
