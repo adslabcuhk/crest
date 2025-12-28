@@ -230,3 +230,13 @@ The data in the aggregated file is stored in the following format:
                << " " << p999_latency << " " << avg_exec_latency << " " << avg_validate_latency
                << " " << avg_commit_latency << "\n";
 ```
+
+## Comparison with other systems
+
+CREST also provides the implementation of other DM-based transactional processing systems, including FORD and MOTOR.
+Users can run the scripts to compare CREST with these systems. The instructions are similar to running CREST, just replace the system name in the scripts. For example, to run FORD on TPC-C:
+
+```shell
+cd scripts
+python3 run_scalability_bench.py ford tpcc
+```
