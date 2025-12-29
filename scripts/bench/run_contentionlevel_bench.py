@@ -228,6 +228,8 @@ def run_crest_contentionlevel(workload: str):
 if __name__ == "__main__":
     sysname = sys.argv[1]
     workload = sys.argv[2]
+    if sysname in ["ford", "motor"] and workload == "ycsb":
+        workload = "micro"
     if sysname == "ford":
         run_ford_contentionlevel(workload)
     elif sysname == "motor":

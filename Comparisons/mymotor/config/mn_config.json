@@ -9,7 +9,9 @@
     "reserve_GB": 160,
     "max_client_num_per_mn": 120,
     "per_thread_delta_size_MB": 100,
-    "workload": "TPCC"
+    "workload": "TPCC",
+    "ib_dev_id": 0,
+    "ib_port_id": 1
   },
   "remote_compute_nodes": {
     "compute_node_ips": [

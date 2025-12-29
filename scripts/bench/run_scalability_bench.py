@@ -189,6 +189,8 @@ def run_crest_scalability(workload: str):
 if __name__ == "__main__":
     sysname = sys.argv[1]
     workload = sys.argv[2]
+    if sysname in ["ford", "motor"] and workload == "ycsb":
+        workload = "micro"
     if sysname == "crest":
         run_crest_scalability(workload)
     elif sysname == "ford":

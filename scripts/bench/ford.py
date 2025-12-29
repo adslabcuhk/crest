@@ -15,15 +15,43 @@ class FordMemoryNode(Node):
         self.project_path = config.fordPath
 
     def exec_cmd(self, cmd: str) -> bool:
-        stdin, stdout, stderr = self.ssh.exec_command(cmd)
-        return True
+        stdin, stdout, stderr = self.ssh.exec_command(cmd, timeout=300, get_pty=True)
+        # Execute this command with a timeout of 60 seconds
+        timeout = config.execCmdTimeout
+        endtime = time.time() + timeout
+        long_running = False
+        while not stdout.channel.exit_status_ready():
+            time.sleep(1)
+            if time.time() > endtime:
+                stdout.channel.close()
+                long_running = True
+                break
+
+        if long_running:
+            print("The command is running too long..., kill it")
+            return False
+
+        print("Command: {} exits".format(cmd))
+        exit_status = stdout.channel.recv_exit_status()
+        if exit_status != 0:
+            stderr_text = stderr.read().decode("utf-8")
+            stdout_text = stdout.read().decode("utf-8")
+            print("Error Message: {}, {}\n".format(stderr_text, stdout_text))
+            return False
+        else:
+            stdout_text = stdout.read().decode("utf-8")
+            if stdout_text != "" and stdout_text != "\n":
+                # print("Output Message: \n", stdout_text)
+                print("Execute OK")
+            return True
 
     # Start up this memory node
     def run(self, workload: str) -> bool:
         binpath = self.project_path + "/build/memory_pool/server/"
         # Use nohup to ensure this program is still running after ssh client is shutdown
         cmd = "cd {} && nohup ./zm_mem_pool > /dev/null 2>&1".format(binpath)
-        return self.exec_cmd(cmd)
+        stdin, stdout, stderr = self.ssh.exec_command(cmd, get_pty=True)
+        return True
 
     # Kill this memory node
     def shutdown(self):
@@ -75,7 +103,7 @@ class FordComputeNode(Node):
 
     def run(self, workload: str, threads: int, coro: int) -> bool:
         print("Start running Ford Compute Node: ip = {}".format(self.ip))
-        cmd = "cd {} && nohup numactl --membind={} --cpunodebind={} ./run {} ford {} {} > output 2>&1".format(
+        cmd = "cd {} && numactl --membind={} --cpunodebind={} ./run {} ford {} {} > output 2>&1".format(
             self.bin_path, self.numa_node, self.numa_node, workload, threads, coro
         )
         t = self.exec_cmd(cmd)

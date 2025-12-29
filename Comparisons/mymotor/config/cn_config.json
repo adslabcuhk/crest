@@ -9,7 +9,9 @@
     "iso_level": 2,
     "crash_tnum": 20,
     "crash_time_ms": 3000,
-    "tp_probe_interval_ms": 1
+    "tp_probe_interval_ms": 1,
+    "ib_dev_id": 1,
+    "ib_port_id": 1
   },
   "remote_mem_nodes": {
     "remote_ips": [

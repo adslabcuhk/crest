@@ -15,8 +15,35 @@ class CrestMemoryNode(Node):
         self.project_path = config.projectPath
 
     def exec_cmd(self, cmd: str) -> bool:
-        stdin, stdout, stderr = self.ssh.exec_command(cmd, get_pty=True)
-        return True
+        stdin, stdout, stderr = self.ssh.exec_command(cmd, timeout=300, get_pty=True)
+        # Execute this command with a timeout of 60 seconds
+        timeout = config.execCmdTimeout
+        endtime = time.time() + timeout
+        long_running = False
+        while not stdout.channel.exit_status_ready():
+            time.sleep(1)
+            if time.time() > endtime:
+                stdout.channel.close()
+                long_running = True
+                break
+
+        if long_running:
+            print("The command is running too long..., kill it")
+            return False
+
+        print("Command: {} exits".format(cmd))
+        exit_status = stdout.channel.recv_exit_status()
+        if exit_status != 0:
+            stderr_text = stderr.read().decode("utf-8")
+            stdout_text = stdout.read().decode("utf-8")
+            print("Error Message: {}, {}\n".format(stderr_text, stdout_text))
+            return False
+        else:
+            stdout_text = stdout.read().decode("utf-8")
+            if stdout_text != "" and stdout_text != "\n":
+                # print("Output Message: \n", stdout_text)
+                print("Execute OK")
+            return True
 
     def run(self, workload: str, thread_num: int, coro_num: int) -> bool:
         binpath = self.project_path + "/build/benchmark/"
@@ -29,10 +56,14 @@ class CrestMemoryNode(Node):
                 thread_num, coro_num
             )
         )
-        return self.exec_cmd(cmd)
+        stdin, stdout, stderr = self.ssh.exec_command(cmd, get_pty=True)
+        return True
 
     def shutdown(self):
         self.exec_cmd("killall bench_runner")
+        self.exec_cmd("killall zm_mem_pool")
+        self.exec_cmd("killall motor_mempool")
+        self.exec_cmd("killall run")
 
 
 class CrestComputeNode(Node):

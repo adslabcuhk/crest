@@ -6,7 +6,9 @@
     "coroutine_num": 8,
     "local_port": 12345,
     "txn_system": 2,
-    "comment": "0 is farm, 1 is drtmh, 2 is ford"
+    "comment": "0 is farm, 1 is drtmh, 2 is ford",
+    "ib_dev_id": 1,
+    "ib_port_id": 1
   },
   "remote_pm_nodes": {
     "remote_ips": [
