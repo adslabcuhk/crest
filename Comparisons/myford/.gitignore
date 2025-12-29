@@ -4,5 +4,4 @@ build
 .idea
 .vscode
 .cache
-config
 .codegpt

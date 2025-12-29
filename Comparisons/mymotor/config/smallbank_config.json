@@ -1,0 +1,8 @@
+{
+  "smallbank": {
+    "num_accounts": 100000,
+    "num_hot_accounts": 400000,
+    "zipfian": 0.99,
+    "attempted_num": 10000000
+  }
+}

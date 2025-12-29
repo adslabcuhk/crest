@@ -1,0 +1,12 @@
+{
+  "micro": {
+    "num_keys": 1000000,
+    "zipfian": 0.1,
+    "num_op": 4,
+    "is_skewed": true,
+    "zipf_theta": 0.99,
+    "data_set_size": 1,
+    "write_ratio": 25,
+    "attempted_num": 1000000
+  }
+}
