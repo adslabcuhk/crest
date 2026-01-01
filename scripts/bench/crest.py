@@ -116,9 +116,10 @@ class CrestComputeNode(Node):
         print("Start running CREST Compute Node: ip = {}".format(self.ip))
         cmd = (
             "cd {} && ".format(self.bin_path)
-            + "nohup numactl --cpunodebind={} --membind={} ".format(
-                self.numa_node, self.numa_node
-            )
+            + "nohup "
+            # + "numactl --cpunodebind={} --membind={} ".format(
+            #     self.numa_node, self.numa_node
+            # )
             + "./bench_runner --type=cn --id={} ".format(self.id)
             + "--config=../../config/{}_config.json --workload={} ".format(
                 workload, workload

@@ -103,8 +103,11 @@ class MotorComputeNode(Node):
     def run(self, workload: str, threads: int, coro: int) -> bool:
         # Spwan the compute node with the command
         print("Start running Motor Compute Node: ip = {}".format(self.ip))
-        cmd = "cd {} && numactl --membind={} --cpunodebind={} ./run {} {} {} SR > output 2>&1".format(
-            self.bin_path, self.numa_node, self.numa_node, workload, threads, coro
+        # cmd = "cd {} && numactl --membind={} --cpunodebind={} ./run {} {} {} SR > output 2>&1".format(
+        #     self.bin_path, self.numa_node, self.numa_node, workload, threads, coro
+        # )
+        cmd = "cd {} && ./run {} {} {} SR > output 2>&1".format(
+            self.bin_path, workload, threads, coro
         )
         print(cmd)
         return self.exec_cmd(cmd)

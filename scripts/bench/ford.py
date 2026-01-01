@@ -103,8 +103,11 @@ class FordComputeNode(Node):
 
     def run(self, workload: str, threads: int, coro: int) -> bool:
         print("Start running Ford Compute Node: ip = {}".format(self.ip))
-        cmd = "cd {} && numactl --membind={} --cpunodebind={} ./run {} ford {} {} > output 2>&1".format(
-            self.bin_path, self.numa_node, self.numa_node, workload, threads, coro
+        # cmd = "cd {} && numactl --membind={} --cpunodebind={} ./run {} ford {} {} > output 2>&1".format(
+        #     self.bin_path, self.numa_node, self.numa_node, workload, threads, coro
+        # )
+        cmd = "cd {} && ./run {} ford {} {} > output 2>&1".format(
+            self.bin_path, workload, threads, coro
         )
         t = self.exec_cmd(cmd)
         if t is False:
