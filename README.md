@@ -216,7 +216,8 @@ python3 run_sensitivity.py crest ycsb
 * Exp#8
 ```shell
 cd scripts
-python3 run_write_ratio.py crest ycsb
+python3 run_write_ratio.py crest ycsb 0.99
+python3 run_write_ratio.py crest ycsb 0.1
 ```
 
 After running each script, the script will automatically gather the results from each compute node, and

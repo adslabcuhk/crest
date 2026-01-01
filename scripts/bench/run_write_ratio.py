@@ -31,9 +31,6 @@ def run_ford_write_ratio(workload: str):
 
     start_time = time.time()
     for i in range(len(WRITE_RATIO)):
-        zipfian = 0.99
-        if i >= 5:
-            zipfian = 0.1
         if workload == "micro":
             bench.setup_micro_configuration(
                 NUM_RECORDS, zipfian, NUM_OPS, WRITE_RATIO[i]
@@ -88,9 +85,6 @@ def run_motor_write_ratio(workload: str):
 
     start_time = time.time()
     for i in range(len(WRITE_RATIO)):
-        zipfian = 0.99
-        if i >= 5:
-            zipfian = 0.1
         if workload == "micro":
             bench.setup_micro_configuration(
                 NUM_RECORDS, zipfian, NUM_OPS, WRITE_RATIO[i]
@@ -145,7 +139,6 @@ def run_crest_write_ratio(workload: str):
 
     start_time = time.time()
     for i in range(len(WRITE_RATIO)):
-        zipfian = 0.1
         if workload == "ycsb":
             bench.setup_ycsb_configuration(
                 NUM_RECORDS, zipfian, NUM_OPS, WRITE_RATIO[i]
@@ -181,8 +174,12 @@ def run_crest_write_ratio(workload: str):
 
 
 if __name__ == "__main__":
+    if len(sys.argv) != 4:
+        print("Usage: python run_write_ratio.py [sysname] [workload] [zipfan]")
+        sys.exit(1)
     sysname = sys.argv[1]
     workload = sys.argv[2]
+    zipfian = float(sys.argv[3])
     if sysname in ["ford", "motor"] and workload == "ycsb":
         workload = "micro"
     if sysname == "ford":
