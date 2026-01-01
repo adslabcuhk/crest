@@ -161,8 +161,8 @@ def run_motor_contentionlevel(workload: str):
 def run_crest_contentionlevel(workload: str):
     bench = crest.CrestBenchmark(workload, config.cns, config.mns)
     wait_load_time = 0
-    # bench.build_project()
-    # bench.clean_bench_results()
+    bench.build_project()
+    bench.clean_bench_results()
     thread_num = 40
     max_try_cnt = 5
 
