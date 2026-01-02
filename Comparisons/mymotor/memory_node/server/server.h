@@ -23,137 +23,126 @@
 using namespace rdmaio;
 
 class Server {
- public:
-  Server(int nid,
-         int local_port,
-         int local_meta_port,
-         size_t data_size,
-         size_t delta_size,
-         int use_pm,
-         std::string& pm_file)
-      : server_node_id(nid),
-        local_port(local_port),
-        local_meta_port(local_meta_port),
-        data_size(data_size),
-        delta_size(delta_size),
-        use_pm(use_pm),
-        pm_file(pm_file),
-        pm_file_fd(0),
-        mem_region(nullptr),
-        hash_buffer(nullptr) {
-    memcached_wrapper = new MemcachedWrapper(3, 0, "10.118.0.45", 11211);
-    memcached_wrapper->ConnectToMemcached();
-    memcached_wrapper->ResetServerNum();
-  }
-
-  ~Server() {
-    RDMA_LOG(INFO) << "Do server cleaning...";
-    if (tatp_server) {
-      delete tatp_server;
-      RDMA_LOG(INFO) << "delete tatp tables";
+   public:
+    Server(int nid, int local_port, int local_meta_port, size_t data_size, size_t delta_size,
+           int use_pm, std::string& pm_file, std::string memcached_ip)
+        : server_node_id(nid),
+          local_port(local_port),
+          local_meta_port(local_meta_port),
+          data_size(data_size),
+          delta_size(delta_size),
+          use_pm(use_pm),
+          pm_file(pm_file),
+          pm_file_fd(0),
+          mem_region(nullptr),
+          hash_buffer(nullptr) {
+        memcached_wrapper = new MemcachedWrapper(3, 0, memcached_ip, 11211);
+        memcached_wrapper->ConnectToMemcached();
+        memcached_wrapper->ResetServerNum();
     }
 
-    if (smallbank_server) {
-      delete smallbank_server;
-      RDMA_LOG(INFO) << "delete smallbank tables";
+    ~Server() {
+        RDMA_LOG(INFO) << "Do server cleaning...";
+        if (tatp_server) {
+            delete tatp_server;
+            RDMA_LOG(INFO) << "delete tatp tables";
+        }
+
+        if (smallbank_server) {
+            delete smallbank_server;
+            RDMA_LOG(INFO) << "delete smallbank tables";
+        }
+
+        if (tpcc_server) {
+            delete tpcc_server;
+            RDMA_LOG(INFO) << "delete tpcc tables";
+        }
+
+        if (micro_server) {
+            delete micro_server;
+            RDMA_LOG(INFO) << "delete micro tables";
+        }
+
+        if (use_pm) {
+            munmap(mem_region, data_size + delta_size);
+            close(pm_file_fd);
+            RDMA_LOG(INFO) << "munmap mr";
+        } else {
+            if (mem_region) {
+                free(mem_region);
+                RDMA_LOG(INFO) << "Free mr";
+            }
+        }
     }
 
-    if (tpcc_server) {
-      delete tpcc_server;
-      RDMA_LOG(INFO) << "delete tpcc tables";
-    }
+    void AllocMem();
 
-    if (micro_server) {
-      delete micro_server;
-      RDMA_LOG(INFO) << "delete micro tables";
-    }
+    void InitMem();
 
-    if (use_pm) {
-      munmap(mem_region, data_size + delta_size);
-      close(pm_file_fd);
-      RDMA_LOG(INFO) << "munmap mr";
-    } else {
-      if (mem_region) {
-        free(mem_region);
-        RDMA_LOG(INFO) << "Free mr";
-      }
-    }
-  }
+    void InitRDMA();
 
-  void AllocMem();
+    void ConnectMN();
 
-  void InitMem();
+    void LoadData(node_id_t machine_id, node_id_t machine_num, std::string& workload);
 
-  void InitRDMA();
+    void SendMeta(node_id_t machine_id, std::string& workload, size_t compute_node_num,
+                  offset_t delta_start_off, size_t per_thread_delta_size);
 
-  void ConnectMN();
+    void PrepareHashMeta(node_id_t machine_id, std::string& workload, char** hash_meta_buffer,
+                         size_t& total_meta_size, offset_t delta_start_off,
+                         size_t per_thread_delta_size);
 
-  void LoadData(node_id_t machine_id, node_id_t machine_num, std::string& workload);
+    void SendHashMeta(char* hash_meta_buffer, size_t& total_meta_size);
 
-  void SendMeta(node_id_t machine_id,
-                std::string& workload,
-                size_t compute_node_num,
-                offset_t delta_start_off,
-                size_t per_thread_delta_size);
+    void AcceptReq();
 
-  void PrepareHashMeta(node_id_t machine_id,
-                       std::string& workload,
-                       char** hash_meta_buffer,
-                       size_t& total_meta_size,
-                       offset_t delta_start_off,
-                       size_t per_thread_delta_size);
+    void CleanTable();
 
-  void SendHashMeta(char* hash_meta_buffer, size_t& total_meta_size);
+    void CleanQP();
 
-  void AcceptReq();
+    bool Run(std::string& workload);
 
-  void CleanTable();
+    void OutputMemoryFootprint(std::string& workload);
 
-  void CleanQP();
+   private:
+    const int server_node_id;
 
-  bool Run(std::string& workload);
+    const int local_port;
 
-  void OutputMemoryFootprint(std::string& workload);
+    const int local_meta_port;
 
- private:
-  const int server_node_id;
+    const size_t data_size;
 
-  const int local_port;
+    const size_t delta_size;
 
-  const int local_meta_port;
+    const int use_pm;
 
-  const size_t data_size;
+    const std::string pm_file;
 
-  const size_t delta_size;
+    int pm_file_fd;
 
-  const int use_pm;
+    // The start address of the whole MR
+    char* mem_region;
 
-  const std::string pm_file;
+    // The start address of the whole hash store space
+    char* hash_buffer;
 
-  int pm_file_fd;
+    // char* b+tree_buffer;
 
-  // The start address of the whole MR
-  char* mem_region;
+    // For server-side workload
+    TATP* tatp_server = nullptr;
 
-  // The start address of the whole hash store space
-  char* hash_buffer;
+    SmallBank* smallbank_server = nullptr;
 
-  // char* b+tree_buffer;
+    TPCC* tpcc_server = nullptr;
 
-  // For server-side workload
-  TATP* tatp_server = nullptr;
+    MICRO* micro_server = nullptr;
 
-  SmallBank* smallbank_server = nullptr;
+    RdmaCtrlPtr rdma_ctrl;
 
-  TPCC* tpcc_server = nullptr;
+    std::unordered_map<node_id_t, MemoryAttr> other_mn_mrs;
 
-  MICRO* micro_server = nullptr;
+    RCQP* other_mn_qps[MAX_REMOTE_NODE_NUM]{nullptr};
 
-  RdmaCtrlPtr rdma_ctrl;
-
-  std::unordered_map<node_id_t, MemoryAttr> other_mn_mrs;
-
-  RCQP* other_mn_qps[MAX_REMOTE_NODE_NUM]{nullptr};
-
-  MemcachedWrapper* memcached_wrapper = nullptr;
+    MemcachedWrapper* memcached_wrapper = nullptr;
 };

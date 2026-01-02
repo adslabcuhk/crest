@@ -312,9 +312,10 @@ int main(int argc, char* argv[]) {
     size_t mem_size = (size_t)1024 * 1024 * 1024 * mem_size_GB;
     size_t hash_buf_size = mem_size;  // Currently, we support the hash structure
     size_t log_buf_size = (size_t)1024 * 1024 * 1024 * log_buf_size_GB;
+    std::string memcached_ip = json_config.get_str("memcached_ip");
 
     auto server = std::make_shared<Server>(machine_id, local_port, local_meta_port, hash_buf_size,
-                                           log_buf_size, use_pm, pm_file, mem_size);
+                                           log_buf_size, use_pm, pm_file, mem_size, memcached_ip);
     server->AllocMem();
     server->InitMem();
     server->LoadData(machine_id, machine_num, workload);

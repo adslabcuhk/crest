@@ -239,7 +239,7 @@ Before running the comparison experiments, users need to:
 
 1. Specify the rdma gid information, which are hard-coded in the source code as DEFAULT_GID_INDEX=3. If your testbed uses different gid, please modify the source code accordingly. (Users can use the command ``show_gids`` to check the gid index of each RDMA device.)
 2. build these systems using the ``build.sh`` script
-3. setup the configuration files under ``config/`` directory for each system, especially the "ib_dev_id", "machine_id", and "*_ips" fields in ``cn_config.json`` and ``mn_config.json`` file.
+3. setup the configuration files under ``config/`` directory for each system, especially the "ib_dev_id", "machine_id", "memcached_ip"(usually the first mn), and "*_ips" fields in ``cn_config.json`` and ``mn_config.json`` file.
 
 Users can run the scripts to compare CREST with these systems. The instructions are similar to running CREST, just replace the system name in the scripts. For example, to run FORD on TPC-C:
 

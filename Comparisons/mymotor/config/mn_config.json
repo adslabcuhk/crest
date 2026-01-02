@@ -35,5 +35,6 @@
     "memory_node_ports": [
       12345
     ]
-  }
+  },
+  "memcached_ip": "10.118.0.45"
 }

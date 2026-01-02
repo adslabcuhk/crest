@@ -16,20 +16,16 @@
 #include "util/Memcached.h"
 
 class Handler {
- public:
-  Handler() {
-    // We will have 3 compute nodes, the IP of servers running memcached is 10.118.0.45
-    // The memory cached port is 11211
-    memcached_wrapper = new MemcachedWrapper(3, 0, "10.118.0.45", 11211);
-  }
+   public:
+    Handler();
 
-  void ConfigureComputeNode(int argc, char* argv[]);
+    void ConfigureComputeNode(int argc, char* argv[]);
 
-  void ConfigureComputeNodeForMICRO(int argc, char* argv[]);
+    void ConfigureComputeNodeForMICRO(int argc, char* argv[]);
 
-  void GenThreads(std::string bench_name);
+    void GenThreads(std::string bench_name);
 
-  void OutputResult(std::string bench_name, std::string system_name);
+    void OutputResult(std::string bench_name, std::string system_name);
 
-  MemcachedWrapper* memcached_wrapper;
+    MemcachedWrapper* memcached_wrapper;
 };
