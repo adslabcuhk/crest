@@ -61,9 +61,6 @@ class CrestMemoryNode(Node):
 
     def shutdown(self):
         self.exec_cmd("killall bench_runner")
-        self.exec_cmd("killall zm_mem_pool")
-        self.exec_cmd("killall motor_mempool")
-        self.exec_cmd("killall run")
 
 
 class CrestComputeNode(Node):
@@ -172,6 +169,9 @@ class CrestBenchmark:
             )
 
     def build_project(self):
+        for n in self.cns + self.mns:
+            build_cmd = "cd {}; make -j".format(n.project_path)
+            n.exec_cmd(build_cmd)
         return
 
     def setup_tpcc_configuration(self, num_warehouse: int):
