@@ -38,7 +38,7 @@ EventCount event_counter;
 Handler::Handler() {
     std::string config_filepath = "../../../config/compute_node_config.json";
     auto json_config = JsonConfig::load_file(config_filepath);
-    auto memcached_ip = json_config.get_str("memcached_ip");
+    auto memcached_ip = json_config.get("memcached_ip").get_str();
     // Three compute nodes
     memcached_wrapper = new MemcachedWrapper(3, 0, memcached_ip, 11211);
 }

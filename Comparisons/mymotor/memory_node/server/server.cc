@@ -663,7 +663,7 @@ int main(int argc, char *argv[]) {
     size_t data_size = (size_t)1024 * 1024 * 1024 * reserve_GB;
     size_t per_thread_delta_size = (size_t)1024 * 1024 * per_thread_delta_size_MB;
     size_t delta_size = per_thread_delta_size * max_client_num_per_mn;
-    std::string memcached_ip = json_config.get_str("memcached_ip");
+    auto memcached_ip = json_config.get("memcached_ip").get_str();
 
     auto server = std::make_shared<Server>(machine_id, local_port, local_meta_port, data_size,
                                            delta_size, use_pm, pm_file, memcached_ip);
